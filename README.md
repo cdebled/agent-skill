@@ -16,14 +16,6 @@ This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) th
 
 ## Installation
 
-### Via [skills.sh](https://skills.sh)
-
-```bash
-npx skills add lightpanda-io/agent-skill
-```
-
-### Manual
-
 Copy `SKILL.md` to your agent's skills directory, then run the install script to download the Lightpanda binary:
 
 ```bash
