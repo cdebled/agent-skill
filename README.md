@@ -8,11 +8,13 @@ This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) th
 
 ## Features
 
-- Faster and lighter than Chrome for headless operations
-- CDP (Chrome DevTools Protocol) compatible
+- Faster and lighter than Chrome for headless operations (9x faster, 16x less memory)
+- Native MCP server with agent-optimized tools
+- CLI fetch command with wait strategies and multiple output formats
+- CDP (Chrome DevTools Protocol) compatible with custom LP domain extensions
 - Works with Playwright and Puppeteer
 - JavaScript execution support
-- Accessibility tree extraction
+- Semantic tree and markdown extraction
 
 ## Installation
 
@@ -22,19 +24,34 @@ Copy `SKILL.md` to your agent's skills directory, then run the install script to
 bash scripts/install.sh
 ```
 
+### Quick Setup for Claude Code (MCP)
+
+```bash
+claude mcp add lightpanda -- $HOME/.local/bin/lightpanda mcp
+```
+
+## Three Ways to Use Lightpanda
+
+| Interface | Best for | Command |
+|-----------|----------|---------|
+| **MCP server** | Agent workflows, interactive browsing | `lightpanda mcp` |
+| **CLI fetch** | Quick one-off page extraction | `lightpanda fetch --dump markdown URL` |
+| **CDP server** | Custom Playwright/Puppeteer automation | `lightpanda serve --port 9222` |
+
 ## Platform Support
 
 - Linux (x86_64, aarch64)
 - macOS (x86_64, arm64)
-- Windows is not supported
+- Windows via WSL2
 
 ## Usage
 
 See [SKILL.md](SKILL.md) for detailed usage instructions, including:
 
-- Starting the browser server
-- Connecting with Playwright or Puppeteer
-- Extracting accessibility trees
+- MCP server setup and available tools
+- CLI fetch options and output formats
+- CDP server with Playwright or Puppeteer
+- Custom LP CDP domain methods
 - Important notes and limitations
 
 ## License
