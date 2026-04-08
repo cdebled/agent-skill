@@ -18,6 +18,12 @@ This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) th
 
 ## Installation
 
+### Skill.sh
+
+```bash
+npx skills add https://github.com/lightpanda-io/agent-skill --skill Lightpanda
+```
+
 ### Claude Code Plugin
 
 Add the marketplace and install the plugin:
