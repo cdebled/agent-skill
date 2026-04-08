@@ -18,13 +18,30 @@ This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) th
 
 ## Installation
 
-Copy `SKILL.md` to your agent's skills directory, then run the install script to download the Lightpanda binary:
+### Claude Code Plugin
+
+Add the marketplace and install the plugin:
+
+```bash
+/plugin marketplace add lightpanda-io/agent-skill
+/plugin install lightpanda@lightpanda-io-agent-skill
+```
+
+Then install the Lightpanda binary:
 
 ```bash
 bash scripts/install.sh
 ```
 
-### Quick Setup for Claude Code (MCP)
+### Manual Setup
+
+Copy `SKILL.md` to your agent's skills directory, then run the install script:
+
+```bash
+bash scripts/install.sh
+```
+
+Then add the MCP server to Claude Code:
 
 ```bash
 claude mcp add lightpanda -- $HOME/.local/bin/lightpanda mcp
