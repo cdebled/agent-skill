@@ -152,7 +152,6 @@ $HOME/.local/bin/lightpanda serve --host 127.0.0.1 --port 9222
 Options:
 - `--log-level info|debug|warn|error` — Set logging verbosity
 - `--log-format pretty|logfmt` — Output format for logs
-- `--timeout` — Inactivity timeout in seconds (default: 10)
 - `--obey-robots` — Fetch and obey robots.txt
 
 ### Using with playwright-core
