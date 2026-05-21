@@ -62,14 +62,12 @@ Add to your MCP client configuration:
 {
   "mcpServers": {
     "lightpanda": {
-      "command": "$HOME/.local/bin/lightpanda",
-      "args": ["mcp"]
+      "command": "sh",
+      "args": ["-c", "exec $HOME/.local/bin/lightpanda mcp"]
     }
   }
 }
 ```
-
-Replace `$HOME` with the actual path (e.g., `/home/username` or `/Users/username`).
 
 ### Available MCP Tools
 
