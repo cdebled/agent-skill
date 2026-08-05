@@ -50,7 +50,7 @@ bash scripts/install.sh
 Then add the MCP server to Claude Code:
 
 ```bash
-claude mcp add lightpanda -- $HOME/.local/bin/lightpanda mcp
+claude mcp add lightpanda -- lightpanda mcp
 ```
 
 ## Three Ways to Use Lightpanda

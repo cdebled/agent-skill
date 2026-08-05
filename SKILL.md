@@ -68,7 +68,7 @@ The MCP server is the simplest way for agents to use Lightpanda. It exposes purp
 ### Setup for Claude Code
 
 ```bash
-claude mcp add lightpanda -- $HOME/.local/bin/lightpanda mcp
+claude mcp add lightpanda -- lightpanda mcp
 ```
 
 To respect `robots.txt`, append `--obey-robots` to the command.
@@ -81,8 +81,8 @@ Add to your MCP client configuration:
 {
   "mcpServers": {
     "lightpanda": {
-      "command": "sh",
-      "args": ["-c", "exec $HOME/.local/bin/lightpanda mcp"]
+      "command": "lightpanda",
+      "args": ["mcp"]
     }
   }
 }
@@ -162,7 +162,7 @@ A typical agent workflow:
 For one-off page extraction without starting a server:
 
 ```bash
-$HOME/.local/bin/lightpanda fetch --dump markdown --wait-until networkidle https://example.com
+lightpanda fetch --dump markdown --wait-until networkidle https://example.com
 ```
 
 ### Options
@@ -185,17 +185,17 @@ $HOME/.local/bin/lightpanda fetch --dump markdown --wait-until networkidle https
 
 Extract page as markdown:
 ```bash
-$HOME/.local/bin/lightpanda fetch --dump markdown https://example.com
+lightpanda fetch --dump markdown https://example.com
 ```
 
 Extract semantic tree (compact, AI-friendly):
 ```bash
-$HOME/.local/bin/lightpanda fetch --dump semantic_tree_text --wait-until networkidle https://example.com
+lightpanda fetch --dump semantic_tree_text --wait-until networkidle https://example.com
 ```
 
 Fetch with longer wait for slow pages:
 ```bash
-$HOME/.local/bin/lightpanda fetch --dump html --wait-ms 10000 --wait-until networkidle https://example.com
+lightpanda fetch --dump html --wait-ms 10000 --wait-until networkidle https://example.com
 ```
 
 ## CDP Server — Advanced Automation
@@ -204,7 +204,7 @@ For full browser control via Playwright or Puppeteer:
 
 ### Start the Browser Server
 ```bash
-$HOME/.local/bin/lightpanda serve --host 127.0.0.1 --port 9222
+lightpanda serve --host 127.0.0.1 --port 9222
 ```
 
 Serve-specific options:
@@ -313,7 +313,7 @@ Three ways to produce one:
 Replay with no LLM involved:
 
 ```bash
-$HOME/.local/bin/lightpanda run script.js
+lightpanda run script.js
 ```
 
 A script's only global is `Page`: `new Page()` makes a page, `await page.goto(url)` navigates (the one async primitive — always `await` it), and every other browser tool is a synchronous method on that page:
@@ -340,7 +340,7 @@ Strings can contain `$LP_*` placeholders, resolved from environment variables in
 * For web searches, use the `search` tool (or DuckDuckGo directly) instead of Google. Google blocks Lightpanda due to browser fingerprinting.
 * Lightpanda is under heavy development and may have occasional issues. It executes JavaScript, making it suitable for dynamic websites and SPAs.
 * **`goto` always reports success:** it returns `"Navigated successfully."` even for an unreachable or invalid URL. The failure surfaces on the next content call instead (e.g. a `markdown` result starting with `# Navigation failed`). Always verify with a follow-up read, not the `goto` response itself.
-* **CDP connection limits:** Only 1 CDP connection per process. Each connection supports 1 context and 1 page. For parallel browsing, start multiple processes on different ports — Lightpanda starts instantly, so this is fast.
+* **CDP connection limits:** Up to 16 simultaneous CDP connections per process by default (tune with `--cdp-max-connections`). Each connection supports 1 context and 1 page. For more parallelism than that, start multiple processes on different ports — Lightpanda starts instantly, so this is fast.
 * **CDP state management:** The browser resets all state on CDP connection close. Keep the WebSocket connection open throughout a session. On each connection, always create a new context and page, and close both when done.
 * The MCP server handles connection management automatically — these CDP limits don't apply when using MCP tools.
 

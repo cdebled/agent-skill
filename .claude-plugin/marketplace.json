@@ -35,11 +35,8 @@
       "mcpServers": [
         {
           "lightpanda": {
-            "command": "sh",
-            "args": [
-              "-c",
-              "exec $HOME/.local/bin/lightpanda mcp"
-            ]
+            "command": "lightpanda",
+            "args": ["mcp"]
           }
         }
       ]
