@@ -21,7 +21,7 @@ This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) th
 ### Skill.sh
 
 ```bash
-npx skills add https://github.com/lightpanda-io/agent-skill --skill Lightpanda
+npx skills add https://github.com/lightpanda-io/agent-skill --skill lightpanda
 ```
 
 ### Claude Code Plugin
