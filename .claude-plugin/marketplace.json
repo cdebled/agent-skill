@@ -30,7 +30,8 @@
       "homepage": "https://lightpanda.io/docs",
       "strict": false,
       "skills": [
-        "./"
+        "./",
+        "./pandascript"
       ],
       "mcpServers": [
         {

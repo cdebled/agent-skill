@@ -316,24 +316,7 @@ Replay with no LLM involved:
 lightpanda run script.js
 ```
 
-A script's only global is `Page`: `new Page()` makes a page, `await page.goto(url)` navigates (the one async primitive — always `await` it), and every other browser tool is a synchronous method on that page:
-
-```javascript
-const page = new Page();
-await page.goto("https://news.ycombinator.com/");
-
-const { stories } = page.extract({
-  stories: [{
-    selector: "tr.athing",
-    limit: 5,
-    fields: { title: ".titleline > a" }
-  }]
-});
-
-return stories;
-```
-
-Strings can contain `$LP_*` placeholders, resolved from environment variables inside the Lightpanda process — this keeps credentials out of saved scripts. Full primitive list, calling conventions, and the extraction schema are in the [PandaScript guide](https://lightpanda.io/docs/usage/pandascript).
+For the scripting semantics (primitives, the extraction schema, common errors), see the `pandascript` skill. It's generated from the runtime's own tool schemas, so it can't drift the way hand-written prose can. The [PandaScript guide](https://lightpanda.io/docs/usage/pandascript) covers the same ground for a human reading this repo without a skill loaded.
 
 ## Important Notes
 
