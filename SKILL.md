@@ -3,7 +3,7 @@ name: lightpanda
 description: Lightpanda browser, drop-in replacement for Chrome-based browsing in any AI agent - faster and lighter for tasks without graphical rendering like data retrieval. Use it via MCP server, CLI fetch, or CDP with Playwright/Puppeteer — or run/save automations as deterministic, token-free replay scripts (PandaScript) via its own agent mode.
 license: Apache-2.0
 compatibility: "Linux and macOS only (Windows via WSL2). Installs its own binary via scripts/install.sh — not run automatically by the plugin installer, so run it once before first use."
-allowed-tools: Bash
+allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/install.sh), Bash(command -v lightpanda), Bash(lightpanda *)
 metadata:
   version: "2.1.0"
   author: Lightpanda
@@ -244,7 +244,7 @@ const { chromium } = require('playwright-core');
 
 ### Using with puppeteer-core
 
-Connect using `puppeteer-core` (not the full `puppeteer` package) — same shape as the Playwright example above, with these differences:
+Connect using `puppeteer-core` (not the full `puppeteer` package). This snippet only shows what differs from the Playwright example above, so it isn't runnable on its own. Reuse that example's setup and teardown, and swap in these lines instead.
 
 ```javascript
 const puppeteer = require('puppeteer-core');
@@ -330,7 +330,7 @@ const { stories } = page.extract({
   }]
 });
 
-stories;
+return stories;
 ```
 
 Strings can contain `$LP_*` placeholders, resolved from environment variables inside the Lightpanda process — this keeps credentials out of saved scripts. Full primitive list, calling conventions, and the extraction schema are in the [PandaScript guide](https://lightpanda.io/docs/usage/pandascript).
@@ -339,7 +339,7 @@ Strings can contain `$LP_*` placeholders, resolved from environment variables in
 
 * For web searches, use the `search` tool (or DuckDuckGo directly) instead of Google. Google blocks Lightpanda due to browser fingerprinting.
 * Lightpanda is under heavy development and may have occasional issues. It executes JavaScript, making it suitable for dynamic websites and SPAs.
-* **`goto` always reports success:** it returns `"Navigated successfully."` even for an unreachable or invalid URL. The failure surfaces on the next content call instead (e.g. a `markdown` result starting with `# Navigation failed`). Always verify with a follow-up read, not the `goto` response itself.
+* **Be careful trusting `goto`'s response.** It reports failure directly for DNS and connection errors (e.g. `CouldntResolveHost`), so that part is reliable. Two other cases still look like success. A timeout returns "Navigation started but the page did not finish loading before the timeout." instead of failing. An HTTP error page (404, 500) is a real response, so `goto` reports it as a successful navigation to that page. Check the content with a follow-up read when the response status matters.
 * **CDP connection limits:** Up to 16 simultaneous CDP connections per process by default (tune with `--cdp-max-connections`). Each connection supports 1 context and 1 page. For more parallelism than that, start multiple processes on different ports — Lightpanda starts instantly, so this is fast.
 * **CDP state management:** The browser resets all state on CDP connection close. Keep the WebSocket connection open throughout a session. On each connection, always create a new context and page, and close both when done.
 * The MCP server handles connection management automatically — these CDP limits don't apply when using MCP tools.
