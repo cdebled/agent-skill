@@ -21,7 +21,7 @@ This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) th
 ### Skill.sh
 
 ```bash
-npx skills add https://github.com/lightpanda-io/agent-skill --skill Lightpanda
+npx skills add https://github.com/lightpanda-io/agent-skill --skill lightpanda
 ```
 
 ### Claude Code Plugin
@@ -50,7 +50,7 @@ bash scripts/install.sh
 Then add the MCP server to Claude Code:
 
 ```bash
-claude mcp add lightpanda -- $HOME/.local/bin/lightpanda mcp
+claude mcp add lightpanda -- lightpanda mcp
 ```
 
 ## Three Ways to Use Lightpanda

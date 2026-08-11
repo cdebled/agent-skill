@@ -14,7 +14,7 @@
       "name": "lightpanda",
       "source": "./",
       "description": "Fast headless browser for AI agents - drop-in replacement for Chrome/Chromium for data extraction and web automation",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": {
         "name": "Lightpanda"
       },
@@ -30,16 +30,14 @@
       "homepage": "https://lightpanda.io/docs",
       "strict": false,
       "skills": [
-        "./SKILL.md"
+        "./",
+        "./pandascript"
       ],
       "mcpServers": [
         {
           "lightpanda": {
-            "command": "sh",
-            "args": [
-              "-c",
-              "exec $HOME/.local/bin/lightpanda mcp"
-            ]
+            "command": "lightpanda",
+            "args": ["mcp"]
           }
         }
       ]
