@@ -144,7 +144,7 @@ Where both `selector` and `backendNodeId` are accepted, either locates the targe
 
 ### Multiple sessions (HTTP transport)
 
-Pass `--port` to serve MCP over HTTP instead of stdio, giving each client an independent browsing session: `lightpanda mcp --port 8000`. An `initialize` call with no `Mcp-Session-Id` header mints a fresh session and returns its id in the response header; reuse that id on later calls (or share it with another client). Calls with no session header fall back to the always-present `default` session. Manage sessions explicitly with `session_new` / `session_list` / `session_close`. Over stdio (the Claude Code setup above), there's only ever the one `default` session.
+Pass `--port` to serve MCP over HTTP instead of stdio, giving each client an independent browsing session: `lightpanda mcp --port 8000`. An `initialize` call with no `Mcp-Session-Id` header mints a fresh session and returns its id in the response header; reuse that id on later calls (or share it with another client). Calls with no session header fall back to the always-present `default` session. Manage sessions explicitly with `session_new` / `session_list` / `session_close`. Over stdio (the Claude Code setup above), there's only ever the one `default` session. Give a task that reads untrusted content its own session (see **Best Practices**).
 
 Add `--cdp-port <INT>` to also run a CDP (WebSocket) server on the same process — useful if something in your workflow needs raw CDP (e.g. Playwright/Puppeteer) alongside MCP. It can't be combined with `--port`, since both share one network listener.
 
@@ -348,6 +348,31 @@ When and why to use each, see Best Practices below.
 * **CDP connection limits:** Up to 16 simultaneous CDP connections per process by default (tune with `--cdp-max-connections`). Each connection supports 1 context and 1 page. For more parallelism than that, start multiple processes on different ports — Lightpanda starts instantly, so this is fast.
 * **CDP state management:** The browser resets all state on CDP connection close. Keep the WebSocket connection open throughout a session. On each connection, always create a new context and page, and close both when done.
 * The MCP server handles connection management automatically — these CDP limits don't apply when using MCP tools.
+
+## Best Practices
+
+Lightpanda runs exactly the requests you ask for. It's a browser, not a crawler, and has no built-in politeness policy; setting the right behavior is on you. The flags named here are documented in Common Options above; this section is about when each one matters.
+
+**Identify your traffic.** Operators route, rate-limit, and allowlist traffic they recognize. Recommend an identity for the user to confirm: a name (org, project, or personal handle) plus a URL an operator can check to see what the bot does and reach them (a repo, docs page, or profile). Pass it as `--user-agent`; don't ship the placeholder below.
+
+```bash
+lightpanda serve --user-agent "<name>/1.0 (+https://<your-url>)"
+```
+
+A user-agent string is only a claim that anything can send. Web Bot Auth (the `--web-bot-auth-*` flags) makes it verifiable, and Cloudflare, Akamai, Google, and AWS all check the signature.
+
+**Fetching many pages on one host?** Turn on `--obey-robots` and set `--http-nav-delay 1000`; lower it only when you know the host can take it. A `429` or `503` with `Retry-After` means even that pace was too fast: honor the header in your own code, since `--http-nav-delay` won't.
+
+**Send fewer requests. The largest win is in the design:**
+- Prefer a bulk source: `git clone` over walking a web git forge, a documented API over its UI, `sitemap.xml` over link discovery.
+- Cap how deep you follow links and how many URLs you keep per domain. Stay out of infinite URL spaces (calendars, arbitrary diffs, faceted search); a run that wanders in never terminates and looks like an attack while it does.
+- Set `--http-cache-dir` for anything that runs more than once; unchanged resources then cost only a revalidation.
+- Cut trackers and ads with `--adblock-lists` / `--block-urls`. Sub-resources and external stylesheets aren't fetched by default (agent mode with an LLM is the exception: it loads stylesheets for visibility checks).
+- Use the `search` tool instead of navigating a search-results page.
+
+**Give every task its own browser.** A fresh instance carries no leftover cookies or state, and scoping caps the blast radius of a prompt injection from untrusted page content. Add `--block-private-networks` whenever you follow links a page handed you rather than links you chose. CDP: a new browser or context per task. MCP: stdio mode is one browser for the whole session, so use HTTP mode (`--port`) when you need a browser per task.
+
+**Once a flow is settled, stop re-deriving it.** Capture it as a PandaScript (the Saved Scripts section above) and replay it with `lightpanda run`: no tokens spent, and failures surface as script errors instead of plausible wrong answers.
 
 ## Scripts
 - `scripts/install.sh` — Install Lightpanda binary
