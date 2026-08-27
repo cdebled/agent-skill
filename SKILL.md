@@ -131,8 +131,8 @@ Where both `selector` and `backendNodeId` are accepted, either locates the targe
 - `getEnv` — Read an `LP_*` environment variable, or list the set `LP_*` names
 - `consoleLogs` — Get buffered console.log/warn/error messages, then clear the buffer
 
-**Session** (relevant over [HTTP transport](#multiple-sessions-http-transport)):
-- `save` — Save the session as a reusable PandaScript (see [Saved Scripts](#saved-scripts-pandascript))
+**Session** (relevant with the HTTP transport, below):
+- `save` — Save the session as a reusable PandaScript (see the Saved Scripts section)
 - `session_new` — Create a new isolated browser session (its own page, cookies, memory) and return its id
 - `session_list` — List active sessions with their id and current URL
 - `session_close` — Close a session (the `default` session cannot be closed)
