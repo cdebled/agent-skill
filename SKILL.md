@@ -177,9 +177,8 @@ lightpanda fetch --dump markdown --wait-until networkidle https://example.com
 - `--json` — Print fetch status as JSON instead of/alongside the dump; required when fetching multiple URLs
 - `--inject-script` / `--inject-script-file` — JavaScript to run as the document's `<head>` is parsed, before any page script runs. Repeatable; runs in CLI order
 - `--terminate-ms` — Hard deadline in milliseconds; forcibly terminates JS execution after this time (unlike `--wait-ms`, which only stops waiting)
-- `--obey-robots` — Fetch and obey robots.txt (a common option shared by every command, see below)
 
-`--obey-robots`, logging (`--log-level`/`--log-format`), and proxy/network flags are common options accepted by every Lightpanda command (`fetch`, `serve`, `mcp`, `agent`, `run`), not just `fetch` — run `lightpanda help fetch` or see the [fetch command guide](https://lightpanda.io/docs/run-locally/commands/fetch) for the full list.
+Flags shared by every command are in Common Options below; the [fetch command guide](https://lightpanda.io/docs/run-locally/commands/fetch) is the complete reference.
 
 ### Examples
 
@@ -207,13 +206,13 @@ For full browser control via Playwright or Puppeteer:
 lightpanda serve --host 127.0.0.1 --port 9222
 ```
 
-Serve-specific options:
+Options:
 - `--cdp-max-connections` — Max simultaneous CDP connections (default: 16)
 - `--cdp-max-message-size` — Max incoming WebSocket message size (default: 1MB)
 - `--disable-metrics` — Disable the `/metrics` Prometheus endpoint
 - `--advertise-host` — Host to advertise in e.g. the `/json/version` response, useful when `--host` is `0.0.0.0`
 
-Logging (`--log-level`, `--log-format`), `--obey-robots`, and proxy/network flags are common options shared by every command, not `serve`-specific — run `lightpanda help serve` or see the [serve command guide](https://lightpanda.io/docs/run-locally/commands/serve) for the full list.
+Flags shared by every command are in Common Options below; the [serve command guide](https://lightpanda.io/docs/run-locally/commands/serve) is the complete reference.
 
 ### Using with playwright-core
 
@@ -317,6 +316,29 @@ lightpanda run script.js
 ```
 
 For the scripting semantics (primitives, the extraction schema, common errors), see the `pandascript` skill. It's generated from the runtime's own tool schemas, so it can't drift the way hand-written prose can. The [PandaScript guide](https://lightpanda.io/docs/usage/pandascript) covers the same ground for a human reading this repo without a skill loaded.
+
+## Common Options
+
+Accepted by every command (`fetch`, `serve`, `mcp`, `agent`, `run`), not only where each section's examples show them. `lightpanda help <command>` lists the rest (proxy, TLS, timeouts, storage).
+
+**Logging:** `--log-level` (`debug`/`info`/`warn`/`error`/`fatal`), `--log-format` (`pretty`/`logfmt`).
+
+**Identity:**
+- `--user-agent <string>`: override the User-Agent header entirely; any value containing "Mozilla" is forbidden, and `Sec-Ch-Ua: "Lightpanda";v="1"` is still sent. `--user-agent-suffix <string>` instead appends to the default `Lightpanda/X.Y` (not combinable with `--user-agent`).
+- `--web-bot-auth-key-file <path>` / `--web-bot-auth-keyid <thumbprint>` / `--web-bot-auth-domain <domain>`: sign every request with an Ed25519 key so sites can verify your identity against a key directory you publish.
+
+**Politeness:**
+- `--obey-robots`: fetch and obey robots.txt (one fetch per host, cached for the session). Defaults to false.
+- `--http-nav-delay <ms>`: minimum time between two top-level navigations to the same host. `0` (default) disables it. `--http-nav-burst <n>` is how many navigations may start before the delay applies (default `1`).
+
+**Efficiency:**
+- `--http-cache-dir <path>`: directory used as a filesystem cache for network resources (RFC 9111 revalidation). Omitting it disables caching.
+- `--adblock-lists <file>`: EasyList-syntax filter files; requests to a blocked hostname fail before they leave. Repeatable.
+- `--block-urls "<pattern>"`: block URLs matching a case-insensitive `*`-wildcard pattern. Repeatable.
+
+**Security:** `--block-private-networks`: block HTTP requests to private/internal IP addresses after DNS resolution. Defaults to false.
+
+When and why to use each, see Best Practices below.
 
 ## Important Notes
 
