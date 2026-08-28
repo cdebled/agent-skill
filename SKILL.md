@@ -19,7 +19,7 @@ Lightpanda is a headless browser built from scratch for AI agents. It's 9x faste
 
 **Alternative to built-in web search**
 
-When the built-in Web Search tool is unavailable, or when you need more control over search results (e.g., following links to extract full page content), use Lightpanda's own `search` MCP tool (backed by Brave/Tavily if configured, else DuckDuckGo) as an alternative.
+When the built-in Web Search tool is unavailable, or when you need more control over search results (e.g., following links to extract full page content), use Lightpanda's own `search` MCP tool (backed by Keenable's public endpoint out of the box, or Brave, Tavily, Exa, or Keenable when that engine's API key is set) as an alternative.
 Prefer the built-in Web Search tool when it is available and sufficient for your needs.
 
 ## Install
@@ -94,7 +94,7 @@ Where both `selector` and `backendNodeId` are accepted, either locates the targe
 
 **Navigation & search:**
 - `goto` — Navigate to a URL and load the page
-- `search` — Run a web search and return results as markdown (uses Brave/Tavily if `BRAVE_API_KEY`/`TAVILY_API_KEY` is set, else scrapes DuckDuckGo)
+- `search` — Run a web search and return results as markdown: a numbered list of `{title, url, snippet}`. Tries Brave, Tavily, Exa, then Keenable in order, each when its API key (`BRAVE_API_KEY`, `TAVILY_API_KEY`, `EXA_API_KEY` or `KEENABLE_API_KEY`) is set; Keenable also works without a key through its public endpoint (rate-limited per client IP)
 
 **Reading the page** (all accept an optional `url` to navigate first):
 - `markdown` — Get page content, or a subtree, as markdown
@@ -342,7 +342,7 @@ When and why to use each, see Best Practices below.
 
 ## Important Notes
 
-* For web searches, use the `search` tool (or DuckDuckGo directly) instead of Google. Google blocks Lightpanda due to browser fingerprinting.
+* For web searches, use the `search` tool instead of Google. Google blocks Lightpanda due to browser fingerprinting.
 * Lightpanda is under heavy development and may have occasional issues. It executes JavaScript, making it suitable for dynamic websites and SPAs.
 * **Be careful trusting `goto`'s response.** It reports failure directly for DNS and connection errors (e.g. `CouldntResolveHost`), so that part is reliable. Two other cases still look like success. A timeout returns "Navigation started but the page did not finish loading before the timeout." instead of failing. An HTTP error page (404, 500) is a real response, so `goto` reports it as a successful navigation to that page. Check the content with a follow-up read when the response status matters.
 * **CDP connection limits:** Up to 16 simultaneous CDP connections per process by default (tune with `--cdp-max-connections`). Each connection supports 1 context and 1 page. For more parallelism than that, start multiple processes on different ports — Lightpanda starts instantly, so this is fast.
