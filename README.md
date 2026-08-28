@@ -1,81 +1,67 @@
 # Lightpanda Skill for LLM Agents
 
-A skill that provides integration with [Lightpanda](https://github.com/lightpanda-io/browser), a fast headless browser optimized for data extraction and web automation.
+Teach your LLM agent to use [Lightpanda](https://github.com/lightpanda-io/browser), a fast headless browser optimized for data extraction and web automation, as a drop-in replacement for Chrome/Chromium.
 
 ## What is this?
 
-This is a generalist skill for LLM agents (Claude Code, Openclaw, and others) that teaches agents how to use Lightpanda as a drop-in replacement for Chrome/Chromium when performing web scraping and automation tasks.
+This skill covers Lightpanda's interfaces and when to use them:
 
-## Features
+| Interface | Best for |
+|-----------|----------|
+| **MCP server** | Agent workflows, interactive browsing, form filling |
+| **CLI fetch** | Quick one-off page extraction |
+| **CDP server** | Custom automation with Playwright/Puppeteer |
+| **Agent mode** | Natural-language tasks, or authoring a PandaScript to save |
+| **Saved scripts (PandaScript)** | Repeating a task deterministically, token-free |
 
-- Faster and lighter than Chrome for headless operations (9x faster, 16x less memory)
-- Native MCP server with agent-optimized tools
-- CLI fetch command with wait strategies and multiple output formats
-- CDP (Chrome DevTools Protocol) compatible with custom LP domain extensions
-- Works with Playwright and Puppeteer
-- JavaScript execution support
-- Semantic tree and markdown extraction
+A companion sub-skill, [`pandascript`](pandascript/SKILL.md), covers writing PandaScript — the deterministic replay-script format run with `lightpanda run` (no LLM call).
+
+[SKILL.md](SKILL.md) and [lightpanda.io/docs](https://lightpanda.io/docs) are the full reference — every tool, flag, and caveat.
 
 ## Installation
 
-### Skill.sh
+### 1. Add the skill to your agent
+
+Via [skills.sh](https://skills.sh) — works with Claude Code, Cursor, Codex, Windsurf, Copilot, opencode, OpenClaw, Hermes, and more:
 
 ```bash
-npx skills add https://github.com/lightpanda-io/agent-skill --skill lightpanda
+npx skills add lightpanda-io/agent-skill
 ```
 
-### Claude Code Plugin
+It prompts for the skills and target agent — pick `lightpanda`, plus `pandascript` if you'll write replay scripts.
 
-Add the marketplace and install the plugin:
+Claude Code users can instead install the plugin, which also wires in the MCP server:
 
 ```bash
 /plugin marketplace add lightpanda-io/agent-skill
-/plugin install lightpanda@lightpanda-io-agent-skill
+/plugin install lightpanda@lightpanda
 ```
 
-Then install the Lightpanda binary:
+### 2. Install the Lightpanda binary
+
+With the skill loaded, ask the agent to do it — it knows the install script, the package-manager options, and the platform quirks. Or run it yourself:
 
 ```bash
 bash scripts/install.sh
 ```
 
-### Manual Setup
+Homebrew, AUR, and `.deb` builds: see the [install docs](https://lightpanda.io/docs/run-locally/installation/package-managers).
 
-Copy `SKILL.md` to your agent's skills directory, then run the install script:
+### MCP server (optional)
 
-```bash
-bash scripts/install.sh
+The MCP server gives your agent live, interactive browsing — structured tools it calls mid-task (navigate, click, extract, wait, …) against a persistent session. It's one of the five interfaces above, not a requirement.
+
+Claude Code plugin users already have it. For any other MCP client, add this to your config:
+
+```json
+{ "mcpServers": { "lightpanda": { "command": "lightpanda", "args": ["mcp"] } } }
 ```
-
-Then add the MCP server to Claude Code:
-
-```bash
-claude mcp add lightpanda -- lightpanda mcp
-```
-
-## Three Ways to Use Lightpanda
-
-| Interface | Best for | Command |
-|-----------|----------|---------|
-| **MCP server** | Agent workflows, interactive browsing | `lightpanda mcp` |
-| **CLI fetch** | Quick one-off page extraction | `lightpanda fetch --dump markdown URL` |
-| **CDP server** | Custom Playwright/Puppeteer automation | `lightpanda serve --port 9222` |
 
 ## Platform Support
 
 - Linux (x86_64, aarch64)
 - macOS (x86_64, arm64)
 - Windows via WSL2
-
-## Usage
-
-See [SKILL.md](SKILL.md) for detailed usage instructions, including:
-
-- MCP server setup and available tools
-- CLI fetch options and output formats
-- CDP server with Playwright or Puppeteer
-- Custom LP CDP domain methods
-- Important notes and limitations
 
 ## License
 
